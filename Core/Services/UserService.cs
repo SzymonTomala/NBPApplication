@@ -17,27 +17,27 @@ namespace Core.Services
             _context = context;
         }
 
-        public async Task<decimal> GetCurrentExchangeRate(string currencyCode);
+        public async Task<decimal> GetCurrentExchangeRate(string currencyCode)
         {
-            DateTime today = DateTime.Today;
             var currentCurrencyRate = await _context.CurrencyRates
-                .FirstOrDefaultAsync(x => x.Date == today && x.Code == currencyCode);
+                .OrderByDescending(x => x.Date)
+                .FirstOrDefaultAsync(x => x.Code == currencyCode);
 
             return currentCurrencyRate.Value;
-            
         }
 
         public async Task<decimal> GetHistoricalExchangeRate(string currencyCode, DateTime date)
         {
-            var currentCurrencyRate = await _context.CurrencyRates
+            var historicalCurrencyRate = await _context.CurrencyRates
                 .FirstOrDefaultAsync(x => x.Date == date && x.Code == currencyCode);
 
-            return currentCurrencyRate.Value;
+            return historicalCurrencyRate.Value;
         }
 
         public async Task<decimal> RecalculateCurrencyFromPln(string currencyCode, decimal amount)
         {
             var currentCurrencyRate = await _context.CurrencyRates
+                .OrderByDescending(x => x.Date)
                 .FirstOrDefaultAsync(x => x.Code == currencyCode);
 
             return Math.Round(amount / currentCurrencyRate.Value, 2);
@@ -46,6 +46,7 @@ namespace Core.Services
         public async Task<decimal> RecalculateCurrencyToPln(string currencyCode, decimal amount)
         {
             var currentCurrencyRate = await _context.CurrencyRates
+                .OrderByDescending(x => x.Date)
                 .FirstOrDefaultAsync(x => x.Code == currencyCode);
 
             return Math.Round(amount * currentCurrencyRate.Value, 2);
