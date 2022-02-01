@@ -29,7 +29,8 @@ namespace Core.Services
         public async Task<decimal> GetHistoricalExchangeRate(string currencyCode, DateTime date)
         {
             var historicalCurrencyRate = await _context.CurrencyRates
-                .FirstOrDefaultAsync(x => x.Date == date && x.Code == currencyCode);
+                .OrderByDescending(x => x.Date)
+                .FirstOrDefaultAsync(x => x.Code == currencyCode);
 
             return historicalCurrencyRate.Value;
         }
