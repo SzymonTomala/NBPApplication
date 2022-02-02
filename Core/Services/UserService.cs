@@ -29,8 +29,7 @@ namespace Core.Services
         public async Task<decimal> GetHistoricalExchangeRate(string currencyCode, DateTime date)
         {
             var historicalCurrencyRate = await _context.CurrencyRates
-                .OrderByDescending(x => x.Date)
-                .FirstOrDefaultAsync(x => x.Code == currencyCode);
+                .FirstOrDefaultAsync(x => x.Code == currencyCode && x.Date.Date == date.Date);
 
             return historicalCurrencyRate.Value;
         }
@@ -51,6 +50,19 @@ namespace Core.Services
                 .FirstOrDefaultAsync(x => x.Code == currencyCode);
 
             return Math.Round(amount * currentCurrencyRate.Value, 2);
+        }
+
+        public async Task<decimal> RecalculateTwoCurrencies(string firstCurrencyCode, string secondCurrencyCode)
+        {
+            var firstCurrencyRate = await _context.CurrencyRates
+                .OrderByDescending(x => x.Date)
+                .FirstOrDefaultAsync(x => x.Code == firstCurrencyCode);
+
+            var secondCurrencyRate = await _context.CurrencyRates
+                .OrderByDescending(x => x.Date)
+                .FirstOrDefaultAsync(x => x.Code == secondCurrencyCode);
+
+            return Math.Round(firstCurrencyRate.Value / secondCurrencyRate.Value, 2);
         }
     }
 }

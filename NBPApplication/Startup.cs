@@ -45,7 +45,7 @@ namespace NBPApp
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NBPApp v1"));
             }
 
-            app.UseMiddleware<BasicAuthenticationMiddleware>();
+            //app.UseMiddleware<BasicAuthenticationMiddleware>();
 
             app.UseHttpsRedirection();
             

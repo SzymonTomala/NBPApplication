@@ -50,5 +50,13 @@ namespace NBPApplication.Controllers
             var result = await _userService.RecalculateCurrencyToPln(code, amount);
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("recalculateTwoCurrencies/{firstCode}/{secondCode}")]
+        public async Task<IActionResult> RecalculateTwoCurrencies([FromRoute] string firstCode, [FromRoute] string secondCode)
+        {
+            var result = await _userService.RecalculateTwoCurrencies(firstCode, secondCode);
+            return Ok(result);
+        }
     }
 }
