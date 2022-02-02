@@ -28,6 +28,8 @@ namespace NBPApp
             services.AddControllers();
             services.AddEntityFrameworkSqlite().AddDbContext<CurrencyContext>();
             services.AddTransient<IUserService, UserService>();
+            //services.AddHttpClient<NbpService>();
+            services.AddHostedService<NbpService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NBPApp", Version = "v1" });
@@ -54,6 +56,8 @@ namespace NBPApp
             {
                 endpoints.MapControllers();
             });
+
+            var NbpUrl = Configuration.GetSection("NbpApiSettings:BaseUrl").Value; /// ????
         }
     }
 }
