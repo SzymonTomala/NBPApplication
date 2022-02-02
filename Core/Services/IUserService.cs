@@ -12,5 +12,6 @@ namespace Core.Services
         Task<decimal> GetHistoricalExchangeRate(string currencyCode, DateTime date);
         Task<decimal> RecalculateCurrencyToPln(string currencyCode, decimal amount);
         Task<decimal> RecalculateCurrencyFromPln(string currencyCode, decimal amount);
+        Task<decimal> RecalculateTwoCurrencies(string firstCurrencyCode, string secondCurrencyCode);
     }
 }
