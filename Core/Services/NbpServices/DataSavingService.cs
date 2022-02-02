@@ -14,7 +14,6 @@ namespace Infrastructure.Services.NbpApiServices
 {
     public class DataSavingService : IDataSavingService
     {
-        private const int TimeZoneHoursDifference = 1;
         private readonly INbpApiService _nbpApiService;
         private readonly CurrencyContext _context;
 
@@ -30,12 +29,7 @@ namespace Infrastructure.Services.NbpApiServices
             {
                 string json = await _nbpApiService.GetJson(table);
 
-                if (json != null)
-                {
-                    return true;
-                }
-                string properJson = json[1..^1];
-                CompleteResponse response = JsonConvert.DeserializeObject<CompleteResponse>(properJson);
+                CompleteResponse response = JsonConvert.DeserializeObject<List<CompleteResponse>>(json).First();
                 DateTime date = response.EffectiveDate;
 
                 List<Rate> rates = response.Rates.ToList();
