@@ -5,7 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Core.Services;
+using Core.Services.UserServices;
+using Infrastructure.Services.NbpApiServices;
+using Core.Services.NbpServices;
 
 namespace NBPApp
 {
@@ -27,9 +29,10 @@ namespace NBPApp
             services.AddMvc();
             services.AddControllers();
             services.AddEntityFrameworkSqlite().AddDbContext<CurrencyContext>();
+            services.AddHostedService<DailyRequestService>();
+            services.AddTransient<IDataSavingService, DataSavingService>();
+            services.AddTransient<INbpApiService, NbpApiService>();
             services.AddTransient<IUserService, UserService>();
-            //services.AddHttpClient<NbpService>();
-            services.AddHostedService<NbpService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NBPApp", Version = "v1" });
