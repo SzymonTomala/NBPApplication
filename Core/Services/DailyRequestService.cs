@@ -1,8 +1,10 @@
 ﻿using Core.DataAccessLayer;
+using Core.Dto;
 using Core.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +18,11 @@ namespace Core.Services
     public class DailyRequestService : IHostedService, IDisposable
     {
         private Timer timer;
-        private readonly ILogger<DailyRequestService> _logger;
         private readonly HttpClient _httpClient;
+        private readonly ILogger<DailyRequestService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public DailyRequestService(ILogger<DailyRequestService> logger, HttpClient httpClient, IServiceScopeFactory scopeFactory)
+        public DailyRequestService(HttpClient httpClient, ILogger<DailyRequestService> logger, IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
             _logger = logger;
@@ -31,29 +33,40 @@ namespace Core.Services
         {
             timer = new Timer(o =>
             {
-                var result = GetResponse().Result;
-
-                using (var scope = _scopeFactory.CreateScope())
+                try
                 {
-                    CurrencyContext context = scope.ServiceProvider.GetRequiredService<CurrencyContext>();
-                    CurrencyRate currency = new CurrencyRate()
+                    using (var scope = _scopeFactory.CreateScope())
                     {
-                        Code = "USD",
-                        Value = 3.78m,
-                        Date = DateTime.Today
-                    };
-                    context.Add(currency);
-                    context.SaveChanges();
-                }
+                        string json = GetResponse().Result;
 
-                if (string.IsNullOrEmpty(result))
-                    _logger.LogInformation("Nie udało sie");
-                else
-                    _logger.LogInformation(result + "Udało się");
+                        CompleteResponse response = JsonConvert.DeserializeObject<List<CompleteResponse>>(json).First();
+                        DateTime date = response.EffectiveDate;
+
+                        IList<Rate> rates = response.Rates.ToList();
+                        var context = scope.ServiceProvider.GetRequiredService<CurrencyContext>();
+                        foreach (var rate in rates)
+                        {
+                            CurrencyRate newRate = new CurrencyRate()
+                            {
+                                Value = rate.Mid,
+                                Code = rate.Code,
+                                Date = date
+                            };
+                            context.CurrencyRates.AddAsync(newRate);
+                        }
+                        context.SaveChangesAsync();
+                    }
+                }
+                catch(Exception exception)
+                {
+                    _logger.LogInformation($"Nie udało sie: {exception.Message}");
+                }
+                    
+                _logger.LogInformation("Udało się");
 
             },
                 null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(6));
+                TimeSpan.FromHours(24));
 
             return Task.CompletedTask;
         }
@@ -71,7 +84,7 @@ namespace Core.Services
 
         private async Task<string> GetResponse()
         {
-            string path = "http://api.nbp.pl/api/exchangerates/rates/a/usd/?format=json";
+            string path = "http://api.nbp.pl/api/exchangerates/tables/A/today/?format=json";
             HttpResponseMessage result = await _httpClient.GetAsync(path);
 
             string responseBody = await result.Content.ReadAsStringAsync();
