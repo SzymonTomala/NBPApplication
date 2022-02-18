@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Services.UserServices
+namespace Core.Services
 {
     public class UserService : IUserService
     {
