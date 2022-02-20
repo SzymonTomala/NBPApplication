@@ -60,7 +60,8 @@ namespace NBPApplication.Controllers
         public async Task<IActionResult> RecalculateTwoCurrencies([FromRoute] string firstCode, [FromRoute] string secondCode)
         {
             var result = await _userService.RecalculateTwoCurrencies(firstCode, secondCode);
-            return Ok(result);
+
+            return result is not null ? Ok(result) : NotFound();
         }
     }
 }

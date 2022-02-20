@@ -62,17 +62,18 @@ namespace Core.Services
             return Math.Round(amount * currentCurrencyRate.Value, 2);
         }
 
-        public async Task<decimal> RecalculateTwoCurrencies(string firstCurrencyCode, string secondCurrencyCode)
+        public async Task<decimal?> RecalculateTwoCurrencies(string firstCurrencyCode, string secondCurrencyCode)
         {
             var firstCurrencyRate = await _context.CurrencyRates
                 .OrderByDescending(x => x.Date)
-                .FirstOrDefaultAsync(x => x.Code == firstCurrencyCode);
+                .FirstOrDefaultAsync(x => x.Code == firstCurrencyCode.ToUpper());
 
             var secondCurrencyRate = await _context.CurrencyRates
                 .OrderByDescending(x => x.Date)
-                .FirstOrDefaultAsync(x => x.Code == secondCurrencyCode);
+                .FirstOrDefaultAsync(x => x.Code == secondCurrencyCode.ToUpper());
 
-            return Math.Round(firstCurrencyRate.Value / secondCurrencyRate.Value, 2);
+            return firstCurrencyRate is null || secondCurrencyRate is null ?  null :
+                Math.Round(firstCurrencyRate.Value / secondCurrencyRate.Value, 2);
         }
     }
 }
