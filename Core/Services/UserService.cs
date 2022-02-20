@@ -1,7 +1,10 @@
 ﻿using Core.DataAccessLayer;
+using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Services
@@ -74,6 +77,30 @@ namespace Core.Services
 
             return firstCurrencyRate is null || secondCurrencyRate is null ?  null :
                 Math.Round(firstCurrencyRate.Value / secondCurrencyRate.Value, 2);
+        }
+
+        public async Task<string> GetCsvFile(string currencyCode, DateTime dateFrom, DateTime dateTo)
+        {
+            var currencyRates = await _context.CurrencyRates
+                .Where(x => x.Code == currencyCode.ToUpper() && x.Date >= dateFrom.Date && x.Date <= dateTo)
+                .ToListAsync();
+
+            return currencyRates.Count > 0 ? TransferToCsv(currencyRates) : null;
+        }
+
+        private static string TransferToCsv(List<CurrencyRate> currencyRates)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine("Date,Value");
+
+            foreach (var rate in currencyRates)
+            {
+                builder.AppendLine(rate.Date.ToString().Substring(0, 10)
+                    + "," + rate.Value.ToString().Replace(',', '.'));
+            }
+
+            return builder.ToString();
         }
     }
 }

@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Core.Services;
-using NBPApplication.Middleware;
 
 namespace NBPApp
 {
@@ -59,8 +58,6 @@ namespace NBPApp
             {
                 endpoints.MapControllers();
             });
-
-            var NbpUrl = Configuration.GetSection("NbpApiSettings:BaseUrl").Value; /// ????
         }
     }
 }

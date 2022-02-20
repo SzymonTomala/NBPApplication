@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Services
@@ -13,5 +10,6 @@ namespace Core.Services
         Task<decimal?> RecalculateCurrencyToPln(string currencyCode, decimal amount);
         Task<decimal?> RecalculateCurrencyFromPln(string currencyCode, decimal amount);
         Task<decimal?> RecalculateTwoCurrencies(string firstCode, string secondCode);
+        Task<string> GetCsvFile(string currencyCode, DateTime dateFrom, DateTime dateTo);
     }
 }

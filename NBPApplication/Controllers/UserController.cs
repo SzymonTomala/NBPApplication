@@ -1,9 +1,6 @@
 ﻿using Core.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace NBPApplication.Controllers
@@ -38,7 +35,7 @@ namespace NBPApplication.Controllers
         }
 
         [HttpGet]
-        [Route("recalculateFromPln/{code}/{amount}")]
+        [Route("RecalculateFromPln/{code}/{amount}")]
         public async Task<IActionResult> RecalculateCurrencyFromPln([FromRoute] string code, [FromRoute] decimal amount)
         {
             var result = await _userService.RecalculateCurrencyFromPln(code, amount);
@@ -47,7 +44,7 @@ namespace NBPApplication.Controllers
         }
 
         [HttpGet]
-        [Route("recalculateToPln/{code}/{amount}")]
+        [Route("RecalculateToPln/{code}/{amount}")]
         public async Task<IActionResult> RecalculateCurrencyToPln([FromRoute] string code, [FromRoute] decimal amount)
         {
             var result = await _userService.RecalculateCurrencyToPln(code, amount);
@@ -56,12 +53,24 @@ namespace NBPApplication.Controllers
         }
 
         [HttpGet]
-        [Route("recalculateTwoCurrencies/{firstCode}/{secondCode}")]
+        [Route("RecalculateTwoCurrencies/{firstCode}/{secondCode}")]
         public async Task<IActionResult> RecalculateTwoCurrencies([FromRoute] string firstCode, [FromRoute] string secondCode)
         {
             var result = await _userService.RecalculateTwoCurrencies(firstCode, secondCode);
 
             return result is not null ? Ok(result) : NotFound();
         }
+
+        [HttpGet]
+        [Route("GetCsvFile/{currencyCode}/{dateFrom}/{dateTo}")]
+        public async Task<IActionResult> GetCsvFile([FromRoute] string currencyCode,
+            [FromRoute] DateTime dateFrom, [FromRoute] DateTime dateTo)
+        {
+            var result = await _userService.GetCsvFile(currencyCode, dateFrom, dateTo);
+
+            return result is not null ? Ok(result) : NotFound();
+        }
+
+        
     }
 }
