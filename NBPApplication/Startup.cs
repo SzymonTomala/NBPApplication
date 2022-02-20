@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Core.Services;
+using NBPApplication.Middleware;
 
 namespace NBPApp
 {
@@ -46,8 +47,10 @@ namespace NBPApp
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NBPApp v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseMiddleware<BasicAuthenticationMiddleware>();
 
+            app.UseHttpsRedirection();
+            
             app.UseRouting();
 
             app.UseAuthorization();
