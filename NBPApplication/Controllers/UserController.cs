@@ -24,7 +24,8 @@ namespace NBPApplication.Controllers
         public async Task<IActionResult> GetCurrentExchangeRate([FromRoute] string code)
         {
             var result = await _userService.GetCurrentExchangeRate(code);
-            return Ok(result);
+
+            return result is not null ? Ok(result) : NotFound();
         }
 
         [HttpGet]
@@ -32,7 +33,8 @@ namespace NBPApplication.Controllers
         public async Task<IActionResult> GetCurrentExchangeRate([FromRoute] string code, [FromRoute] DateTime date)
         {
             var result = await _userService.GetHistoricalExchangeRate(code, date);
-            return Ok(result);
+
+            return result is not null ? Ok(result) : NotFound();
         }
 
         [HttpGet]
@@ -40,7 +42,8 @@ namespace NBPApplication.Controllers
         public async Task<IActionResult> RecalculateCurrencyFromPln([FromRoute] string code, [FromRoute] decimal amount)
         {
             var result = await _userService.RecalculateCurrencyFromPln(code, amount);
-            return Ok(result);
+
+            return result is not null ? Ok(result) : NotFound();
         }
 
         [HttpGet]
@@ -48,7 +51,8 @@ namespace NBPApplication.Controllers
         public async Task<IActionResult> RecalculateCurrencyToPln([FromRoute] string code, [FromRoute] decimal amount)
         {
             var result = await _userService.RecalculateCurrencyToPln(code, amount);
-            return Ok(result);
+
+            return result is not null ? Ok(result) : NotFound();
         }
     }
 }
