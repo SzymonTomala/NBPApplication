@@ -17,3 +17,5 @@ Project is created with:
 * Json.NET 13.0
 * Swagger
 	
+![User controllers](https://github.com/SzymonTomala/NBPApplication/blob/main/controllers.PNG)
+![CSV with historical currency rates](https://github.com/SzymonTomala/NBPApplication/blob/main/example.PNG)
